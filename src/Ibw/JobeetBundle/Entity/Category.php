@@ -27,6 +27,11 @@ class Category
      */
     private $affiliates;
 
+    public function __toString()
+    {
+        return $this->getName() ? $this->getName() : "";
+    }
+
     /**
      * Constructor
      */

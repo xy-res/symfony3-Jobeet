@@ -33,6 +33,6 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
-    # Ens\JobeetBundle\DataFixtures\:
-    #     resource: '../../src/Ens/JobeetBundle/DataFixtures'
-    #     tags: ['doctrine.fixture.orm']
+    Ibw\JobeetBundle\DataFixtures\:
+        resource: '../../src/Ibw/JobeetBundle/DataFixtures'
+        tags: ['doctrine.fixture.orm']
