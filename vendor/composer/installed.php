@@ -1,11 +1,11 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'v3.3.16',
-        'version' => '3.3.16.0',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => NULL,
+        'reference' => '13f889109a78045203591cff3b483ffd5545830a',
         'name' => 'symfony/framework-standard-edition',
         'dev' => true,
     ),
@@ -55,6 +55,15 @@
             'reference' => '7bce00698899aa2c06fe7365c76e4d78ddb15fa3',
             'dev_requirement' => false,
         ),
+        'doctrine/data-fixtures' => array(
+            'pretty_version' => 'v1.1.1',
+            'version' => '1.1.1.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../doctrine/data-fixtures',
+            'aliases' => array(),
+            'reference' => 'bd44f6b6e40247b6530bc8abe802e4e4d914976a',
+            'dev_requirement' => false,
+        ),
         'doctrine/dbal' => array(
             'pretty_version' => 'v2.5.13',
             'version' => '2.5.13.0',
@@ -80,6 +89,15 @@
             'install_path' => __DIR__ . '/../doctrine/doctrine-cache-bundle',
             'aliases' => array(),
             'reference' => '9baecbd6bfdd1123b0cf8c1b88fee0170a84ddd1',
+            'dev_requirement' => false,
+        ),
+        'doctrine/doctrine-fixtures-bundle' => array(
+            'pretty_version' => '3.0.4',
+            'version' => '3.0.4.0',
+            'type' => 'symfony-bundle',
+            'install_path' => __DIR__ . '/../doctrine/doctrine-fixtures-bundle',
+            'aliases' => array(),
+            'reference' => '0438f8dd0a21bc5325c6be3ae0a09131815e10d4',
             'dev_requirement' => false,
         ),
         'doctrine/inflector' => array(
@@ -392,12 +410,12 @@
             ),
         ),
         'symfony/framework-standard-edition' => array(
-            'pretty_version' => 'v3.3.16',
-            'version' => '3.3.16.0',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => NULL,
+            'reference' => '13f889109a78045203591cff3b483ffd5545830a',
             'dev_requirement' => false,
         ),
         'symfony/http-foundation' => array(
