@@ -4,4 +4,8 @@ ibw_jobeet_ibw_job:
 
 ibw_jobeet_homepage:
     path:     /
-    defaults: { _controller: IbwJobeetBundle:Default:index }
+    defaults: { _controller: IbwJobeetBundle:Job:index }
+
+IbwJobeetBundle_category:
+    path: /category/{slug}/{page}
+    defaults: { _controller: IbwJobeetBundle:Category:show, page: 1 }

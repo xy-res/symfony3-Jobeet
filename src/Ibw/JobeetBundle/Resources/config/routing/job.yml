@@ -4,9 +4,11 @@ ibw_job_index:
     methods:  GET
 
 ibw_job_show:
-    path:     /{id}/show
+    path:     /{company}/{location}/{id}/{position}
     defaults: { _controller: "IbwJobeetBundle:Job:show" }
     methods:  GET
+    requirements:
+        id:  \d+
 
 ibw_job_new:
     path:     /new

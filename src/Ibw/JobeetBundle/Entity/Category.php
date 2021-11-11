@@ -2,6 +2,8 @@
 
 namespace Ibw\JobeetBundle\Entity;
 
+
+use Ibw\JobeetBundle\Utils\Jobeet as Jobeet;
 /**
  * Category
  */
@@ -26,6 +28,12 @@ class Category
      * @var \Doctrine\Common\Collections\Collection
      */
     private $affiliates;
+
+    private $active_jobs;
+
+    private $more_jobs;
+
+    private $slug;
 
     public function __toString()
     {
@@ -142,4 +150,61 @@ class Category
     {
         return $this->affiliates;
     }
+
+    public function setActiveJobs($jobs)
+    {
+        $this->active_jobs = $jobs;
+    }
+ 
+    public function getActiveJobs()
+    {
+        return $this->active_jobs;
+    }
+
+    public function getSlug()
+    {
+        return Jobeet::slugify($this->getName());
+    }
+
+    public function setMoreJobs($jobs)
+    {
+        $this->more_jobs = $jobs >=  0 ? $jobs : 0;
+    }
+ 
+    public function getMoreJobs()
+    {
+        return $this->more_jobs;
+    }
+
+        /**
+     * Set slug
+     *
+     * @param string $slug
+     * @return Category
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+    
+        return $this;
+    }
+    
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setSlugValue()
+    {
+        // Add your code here
+        $this->slug = Jobeet::slugify($this->getName());
+    }
+
+    // /**
+    //  * @ORM\PreUpdate
+    //  */
+    // public function setSlugValue()
+    // {
+    //     // Add your code here
+    //     $this->slug = Jobeet::slugify($this->getName());
+    // }
 }

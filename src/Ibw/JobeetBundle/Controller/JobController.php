@@ -6,6 +6,7 @@ use Ibw\JobeetBundle\Entity\Job;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
+
 /**
  * Job controller.
  *
@@ -20,11 +21,16 @@ class JobController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
  
-        $entities = $em->getRepository('IbwJobeetBundle:Job')->findAll();
+        $categories = $em->getRepository('IbwJobeetBundle:Category')->getWithJobs();
+        foreach($categories as $category) {
+            $category->setActiveJobs($em->getRepository('IbwJobeetBundle:Job')->getActiveJobs($category->getId(),$this->container->getParameter('max_jobs_on_homepage')));
+            $category->setMoreJobs($em->getRepository('IbwJobeetBundle:Job')->countActiveJobs($category->getId()) - $this->container->getParameter('max_jobs_on_homepage'));
+        }
  
         return $this->render('IbwJobeetBundle:Job:index.html.twig', array(
-            'entities' => $entities
-        ));
+            'categories' => $categories
+        )); 
+      
     }
 
     /**
@@ -59,7 +65,7 @@ class JobController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
        
-        $job = $em->getRepository('IbwJobeetBundle:Job')->find($job->getId());
+        $job = $em->getRepository('IbwJobeetBundle:Job')->getActiveJob($job->getId());       
         if (!$job) {
             throw $this->createNotFoundException('Unable to find Job entity.');
         }
