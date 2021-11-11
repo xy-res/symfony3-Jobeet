@@ -2,6 +2,8 @@
 
 symfony3.3学习jobeet项目
 
+**这个是参照别人的项目实现一遍，参照地址： http://www.newlifeclan.com/symfony/archives/394 **
+
 ####  symfony 安装
 
 ```
