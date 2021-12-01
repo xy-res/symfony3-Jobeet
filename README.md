@@ -1,6 +1,8 @@
 # symfony3-Jobeet
 symfony3 tutorial 
 
+原文地址: [https://medium.com/@dragosholban/symfony-2-8-jobeet-tutorial-3a72f67cdbd8](https://medium.com/@dragosholban/symfony-2-8-jobeet-tutorial-3a72f67cdbd8)
+
 ## 安装
 
 composer 安装
@@ -645,6 +647,190 @@ public function __toString()
 
 ```
 php bin/console cache:clear --env=prod
+```
+
+### 模板优化
+
+​	Symfony 采用mvc的设计模式。模板中采用了装饰器模式，即为模板继承。在`app/Resources/views` 存在 `base.html.twig` 模板，这是默认的模板，将这个模板修替换为下面的代码。
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      {% block title %}
+        Jobeet - Your best job board
+      {% endblock %}
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    {% block stylesheets %}
+      <link rel="stylesheet" href="{{ asset('css/main.css') }}" type="text/css" media="all" />
+    {% endblock %}
+    {% block javascripts %}
+    {% endblock %}
+    <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" />
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        <div class="content">
+          <h1><a href="{{ path('job_index') }}">
+            <img src="{{ asset('images/logo.jpg') }}" alt="Jobeet Job Board" />
+          </a></h1>
+ 
+          <div id="sub_header">
+            <div class="post">
+              <h2>Ask for people</h2>
+              <div>
+                <a href="{{ path('job_index') }}">Post a Job</a>
+              </div>
+            </div>
+ 
+            <div class="search">
+              <h2>Ask for a job</h2>
+              <form action="" method="get">
+                <input type="text" name="keywords" id="search_keywords" />
+                <input type="submit" value="search" />
+                <div class="help">
+                  Enter some keywords (city, country, position, ...)
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div id="content">
+        {% if app.session.flashbag.has('notice') %}
+          {% for message in app.session.flashBag.get('notice') %}
+            <div class="flash_notice">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+ 
+        {% if app.session.flashbag.has('error') %}
+          {% for message in app.session.flashBag.get('error') %}
+            <div class="flash_error">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+ 
+        <div class="content">
+            {% block body %}
+            {% endblock %}
+        </div>
+      </div>
+ 
+      <div id="footer">
+        <div class="content">
+          <span class="symfony">
+            <img src="{{ asset('images/jobeet-mini.png') }}" />
+            powered by <a href="http://www.symfony.com/">
+              <img src="{{ asset('images/symfony.gif') }}" alt="symfony framework" />
+            </a>
+          </span>
+          <ul>
+            <li><a href="">About Jobeet</a></li>
+            <li class="feed"><a href="">Full feed</a></li>
+            <li><a href="">Jobeet API</a></li>
+            <li class="last"><a href="">Affiliates</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+```
+
+替换完成后，可以在 `app/Resources/views/job/` 的模板都修改为下面这样
+
+```
+{% extends 'base.html.twig' %}
+ 
+{% block body %}
+  <!-- template code goes here -->
+{% endblock %}
+```
+
+刷新页面可以看到样式文件和图片不存在，需要到Github上获取，[获取地址]([https://github.com/dragosholban/jobeet-sf2.8/tree/day4/web/](https://github.com/dragosholban/jobeet-sf2.8/tree/day4/web/images))  
+
+获取到的css 和images 放到web 下即可。
+
+```html
+<!--app/Resources/views/job/index.html.twig -->
+{% extends 'base.html.twig' %}
+ 
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('css/jobs.css') }}" type="text/css" media="all" />
+{% endblock %}
+ 
+{% block body %}
+    <div id="jobs">
+        <table class="jobs">
+            {% for job in jobs %}
+                <tr class="{{ cycle(['even', 'odd'], loop.index) }}">
+                    <td class="location">{{ job.location }}</td>
+                    <td class="position">
+                        <a href="{{ path('job_show', { 'id': job.id }) }}">
+                            {{ job.position }}
+                        </a>
+                    </td>
+                    <td class="company">{{ job.company }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+```
+
+```html
+<!--app/Resources/views/job/show.html.twig-->
+{% extends 'base.html.twig' %}
+ 
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('css/job.css') }}" type="text/css" media="all" />
+{% endblock %}
+{% block body %}
+    <div id="job">
+      <h1>{{ job.company }}</h1>
+      <h2>{{ job.location }}</h2>
+      <h3>
+        {{ job.position }}
+        <small> - {{ job.type }}</small>
+      </h3>
+ 
+      {% if job.logo %}
+        <div class="logo">
+          <a href="{{ job.url }}">
+            <img src="/uploads/jobs/{{ job.logo }}"
+              alt="{{ job.company }} logo" />
+          </a>
+        </div>
+      {% endif %}
+ 
+      <div class="description">
+        {{ job.description|nl2br }}
+      </div>
+ 
+      <h4>How to apply?</h4>
+ 
+      <p class="how_to_apply">{{ job.howtoapply }}</p>
+ 
+      <div class="meta">
+        <small>posted on {{ job.createdat|date('m/d/Y') }}</small>
+      </div>
+ 
+      <div style="padding: 20px 0">
+        <a href="{{ path('job_edit', { 'id': job.id }) }}">
+          Edit
+        </a>
+      </div>
+    </div>
+{% endblock %}
 ```
 
 

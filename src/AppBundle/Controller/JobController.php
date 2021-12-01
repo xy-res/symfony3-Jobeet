@@ -60,7 +60,7 @@ class JobController extends Controller
     /**
      * Finds and displays a job entity.
      *
-     * @Route("/{id}", name="job_show")
+     * @Route("/job/{company}/{location}/{id}/{position}", name="job_show",requirements={"id" = "\d+"})
      * @Method("GET")
      */
     public function showAction(Job $job)
