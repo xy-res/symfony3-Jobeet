@@ -835,5 +835,202 @@ php bin/console cache:clear --env=prod
 
 ### 路由
 
+让人看到就能明白什么意思，例如：
+
+```
+/job/sensio-labs/paris-france/1/web-developer
+```
+
+对应的url应该设置成
+
+```
+/job/{company}/{location}/{id}/{position}
+```
+
+```php
+//src/AppBundle/Controller/JobController.php
+/**
+ * Finds and displays a job entity.
+ *
+ * @Route("/job/{company}/{location}/{id}/{position}", name="job_show")
+ * @Method("GET")
+ */
+public function showAction(Job $job)
+```
+
+```html
+<!-- app/Resources/views/job/index.html.twig-->
+<a href="{{ path('job_show', { 'id': job.id, 'company': job.company, 'location': job.location, 'position': job.position }) }}">
+    {{ job.position }}
+</a>
+```
+
+有时候需要替换所有非 ASCII 字符
+
+```php
+//src/AppBundle/Entity/Job.php
+use AppBundle\Utils\Jobeet as Jobeet;
+// ...class Job
+{
+    // ...
+    public function getCompanySlug()
+    {
+        return Jobeet::slugify($this->getCompany());
+    }
+ 
+    public function getPositionSlug()
+    {
+        return Jobeet::slugify($this->getPosition());
+    }
+ 
+    public function getLocationSlug()
+    {
+        return Jobeet::slugify($this->getLocation());
+    }
+}
+```
+
+创建 ``src/AppBundle/Utils/Jobeet.php``
+
+```php
+namespace AppBundle\Utils;class Jobeet
+{
+    static public function slugify($text)
+    {
+        // replace all non letters or digits by -
+        $text = preg_replace('/\W+/', '-', $text);
+ 
+        // trim and lowercase
+        $text = strtolower(trim($text, '-'));
+ 
+        return $text;
+    }
+}
+```
+
+更新传值，替换非 ASCII 字符
+
+```html
+<!--app/Resources/views/job/index.html.twig-->
+<a href="{{ path('job_show', { 'id': job.id, 'company': job.companySlug, 'location': job.locationSlug, 'position': job.positionSlug }) }}">
+    {{ job.position }}
+</a>
+```
+
+设置id类型只能是数字
+
+```php 
+//src/AppBundle/Controller/JobController.php
+/**
+ * Finds and displays a job entity.
+ *
+ * @Route("/job/{company}/{location}/{id}/{position}", name="job_show", requirements={"id" = "\d+"})
+ * @Method("GET")
+ */
+```
+
+查看所有的路由
+
+```
+php bin/console debug:router
+```
+
+查看单独的路由
+
+```
+php bin/console debug:router job_show
+```
+
+### model 成操作
+
+```php
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="job")
+ * @ORM\HasLifecycleCallbacks()
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\JobRepository")
+ */
+class Job
+```
+
+数据操作的目录，给更换到 `Entity` 同级目录的 `Reposity` 文件夹中
+
+```php
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="job")
+ * @ORM\HasLifecycleCallbacks()
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\JobRepository")
+ */
+class Job
+```
+
+执行试题更新命令
+
+```
+php bin/console doctrine:generate:entities AppBundle
+```
+
+数据的查询操作就在 `AppBundle/Respository/JobRepository.php` 中进行操作
+
+```php
+class JobRepository extends EntityRepository
+{
+    public function getActiveJobs($category_id = null)
+    {
+        $qb = $this->createQueryBuilder('j')
+            ->where('j.expiresAt > :date')
+            ->setParameter('date', date('Y-m-d H:i:s', time()))
+            ->orderBy('j.expiresAt', 'DESC');        if($category_id)
+        {
+            $qb->andWhere('j.category = :category_id')
+                ->setParameter('category_id', $category_id);
+        }        $query = $qb->getQuery();        return $query->getResult();
+    }
+}
+```
+
+控制层：
+
+```php
+//src/AppBundle/Controller/JobController.php
+public function indexAction()
+{
+    $em = $this->getDoctrine()->getManager();    $jobs = $em->getRepository('AppBundle:Job')->getActiveJobs();    return $this->render('job/index.html.twig', array(
+        'jobs' => $jobs,
+    ));
+
+```
+
+同样在 `Category` 实体设置生成数据库操作
+
+```php
+//src/AppBundle/Entity/Category.php
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="category")
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\CategoryRepository")
+ */
+class Category
+```
+
+```
+php bin/console doctrine:generate:entities AppBundle
+```
+
+增加查询分类查询方法 `AppBundle/Repository/CategoryRepository.php` 
+
+```php
+class CategoryRepository extends EntityRepository
+{
+    public function getWithJobs()
+    {
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT c FROM AppBundle:Category c LEFT JOIN c.jobs j WHERE j.expiresAt > :date'
+        )->setParameter('date', date('Y-m-d H:i:s', time()));        return $query->getResult();
+    }
+}
+```
+
 
 

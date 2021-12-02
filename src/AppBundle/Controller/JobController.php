@@ -5,7 +5,9 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Job;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * Job controller.
@@ -24,11 +26,16 @@ class JobController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $jobs = $em->getRepository('AppBundle:Job')->findAll();
+        $categories = $em->getRepository('AppBundle:Category')->getWithJobs();
 
+        foreach ($categories as $category) {
+            $category->setActiveJobs($em->getRepository('AppBundle:Job')->getActiveJobs($category->getId(),$this->container->getParameter('max_jobs_on_homepage')));
+        }
         return $this->render('job/index.html.twig', array(
-            'jobs' => $jobs,
+            'categories' => $categories
         ));
+
+
     }
 
     /**
@@ -60,7 +67,8 @@ class JobController extends Controller
     /**
      * Finds and displays a job entity.
      *
-     * @Route("/job/{company}/{location}/{id}/{position}", name="job_show",requirements={"id" = "\d+"})
+     * @Route("/job/{company}/{location}/{id}/{position}", name="job_show", requirements={"id" = "\d+"})
+     * @ParamConverter("job", options={"repository_method" = "getActiveJob"})
      * @Method("GET")
      */
     public function showAction(Job $job)

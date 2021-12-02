@@ -140,7 +140,7 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             not_job_new:
 
             // job_show
-            if (0 === strpos($pathinfo, '/job/job') && preg_match('#^/job/job/(?P<company>[^/]++)/(?P<location>[^/]++)/(?P<id>[^/]++)/(?P<position>[^/]++)$#s', $pathinfo, $matches)) {
+            if (0 === strpos($pathinfo, '/job/job') && preg_match('#^/job/job/(?P<company>[^/]++)/(?P<location>[^/]++)/(?P<id>\\d+)/(?P<position>[^/]++)$#s', $pathinfo, $matches)) {
                 if ('GET' !== $canonicalMethod) {
                     $allow[] = 'GET';
                     goto not_job_show;

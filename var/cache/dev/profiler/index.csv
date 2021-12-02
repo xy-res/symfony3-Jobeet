@@ -40,3 +40,11 @@ c2b770,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/10,1638326729,,40
 444de9,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/,1638329370,,200
 2d9939,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/,1638329852,,200
 94c972,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/job/sensio-labs/sensio-labs/2/web-developer,1638329896,,200
+7da1a8,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/,1638350896,,200
+2b939d,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/,1638408443,,200
+44e2dd,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/,1638408833,,200
+b6b8e7,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/,1638409332,,200
+48aa25,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/job/company-100/paris-france/11/web-developer,1638409334,,200
+ce0d64,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/job/company-100/paris-france/1000/web-developer,1638409342,146412,200
+146412,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/job/company-100/paris-france/1000/web-developer,1638409342,,404
+d890b7,127.0.0.1,GET,http://www.jobeet.io:8080/app_dev.php/job/,1638409358,,200
