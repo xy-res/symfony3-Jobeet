@@ -1238,3 +1238,41 @@ QLSTATE[23000]: Integrity constraint violation: 1048 Column 'slug' cannot be nul
 
 是因为 ``@ORM\HasLifecycleCallbacks()`` 未添加到实体中
 
+### Unit Tests
+
+`Jobeet::slugify()` 方法测试，是否能正常运行
+
+创建`JobeetTest.php` 在`src/AppBundle/Tests/Utils`  
+
+assertEquals： 测试前后两个值是否相等
+
+```php
+<?php
+
+namespace AppBundle\Tests\Utils;
+
+use AppBundle\Utils\Jobeet;
+use PHPUnit\Framework\TestCase;
+
+class JobeetTest extends TestCase
+{
+    public function testSlugify()
+    {
+        $this->assertEquals('sensio', Jobeet::slugify('Sensio'));
+        $this->assertEquals('sensio-labs', Jobeet::slugify('sensio labs'));
+        $this->assertEquals('sensio-labs', Jobeet::slugify('sensio   labs'));
+        $this->assertEquals('paris-france', Jobeet::slugify('paris,france'));
+        $this->assertEquals('sensio', Jobeet::slugify('  sensio'));
+        $this->assertEquals('sensio', Jobeet::slugify('sensio  '));
+    }
+}
+```
+
+执行测试，这里是在windows 下
+
+```
+ php phpunit ../../src/AppBundle/Tests/Utils/JobeetTest
+```
+
+`phpunit` 需要切换到 `vendor/bin` 目录下执行 `php phpunit`
+
