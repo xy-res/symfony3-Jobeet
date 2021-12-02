@@ -3,6 +3,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use AppBundle\Utils\Jobeet;
 /**
  * @ORM\Entity()
  * @ORM\Table(name="Category")
@@ -29,6 +30,16 @@ class Category
      * @ORM\ManyToMany(targetEntity="Affiliate",mappedBy="categories")
      */
     private $affiliates;
+
+    private $activeJobs;
+
+    private $moreJobs;
+
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $slug;
+
     /**
      * Constructor
      */
@@ -142,5 +153,28 @@ class Category
     public function getAffiliates()
     {
         return $this->affiliates;
+    }
+
+    public function setActiveJobs($jobs)
+    {
+        $this->activeJobs = $jobs;
+    }
+    public function getActiveJobs()
+    {
+        return $this->activeJobs;
+    }
+    public function getSlug()
+    {
+        return Jobeet::slugify($this->getName());
+    }
+
+    public function setMoreJobs($jobs)
+    {
+        $this->moreJobs = $jobs >=  0 ? $jobs : 0;
+    }
+
+    public function getMoreJobs()
+    {
+        return $this->moreJobs;
     }
 }

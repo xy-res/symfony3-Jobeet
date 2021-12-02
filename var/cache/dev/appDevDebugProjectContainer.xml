@@ -109,6 +109,7 @@
     <parameter key="mailer_password">null</parameter>
     <parameter key="secret">ThisTokenIsNotSoSecretChangeIt</parameter>
     <parameter key="max_jobs_on_homepage">10</parameter>
+    <parameter key="max_jobs_on_category">20</parameter>
     <parameter key="locale">en</parameter>
     <parameter key="fragment.renderer.hinclude.global_template">null</parameter>
     <parameter key="fragment.path">/_fragment</parameter>
@@ -446,6 +447,9 @@
   <services>
     <service id="service_container" class="Symfony\Component\DependencyInjection\ContainerInterface" synthetic="true"/>
     <service id="AppBundle\AppBundle" class="AppBundle\AppBundle" public="false" autowire="true" autoconfigure="true"/>
+    <service id="AppBundle\Controller\CategoryController" class="AppBundle\Controller\CategoryController" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+    </service>
     <service id="AppBundle\Controller\DefaultController" class="AppBundle\Controller\DefaultController" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
     </service>
@@ -457,6 +461,9 @@
     </service>
     <service id="AppBundle\DataFixtures\ORM\LoadJobData" class="AppBundle\DataFixtures\ORM\LoadJobData" public="false" autowire="true" autoconfigure="true">
       <tag name="doctrine.fixture.orm"/>
+    </service>
+    <service id="AppBundle\Form\CategoryType" class="AppBundle\Form\CategoryType" public="false" autowire="true" autoconfigure="true">
+      <tag name="form.type"/>
     </service>
     <service id="AppBundle\Form\JobType" class="AppBundle\Form\JobType" public="false" autowire="true" autoconfigure="true">
       <tag name="form.type"/>
@@ -478,7 +485,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" public="false">
       <tag name="controller.argument_value_resolver" priority="-50"/>
-      <argument type="service" id="service_locator.67fafda7e4875164a7cdcc0f94d64a2d"/>
+      <argument type="service" id="service_locator.e6db932ec1fb08cb20ea78ef2a7ed7ba"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" public="false">
       <tag name="controller.argument_value_resolver" priority="-100"/>
@@ -623,7 +630,7 @@
       <tag name="monolog.logger" channel="cache"/>
       <argument></argument>
       <argument>0</argument>
-      <argument>9xQFOI8+wrEs77shfGOj2I</argument>
+      <argument>Xv21gudjOakBjKgBMsM1u+</argument>
       <argument>E:\xampp\htdocs\tutorial\symfony3-Jobeet\var\cache\dev/pools</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
@@ -633,7 +640,7 @@
       <tag name="monolog.logger" channel="cache"/>
       <argument></argument>
       <argument>0</argument>
-      <argument>9xQFOI8+wrEs77shfGOj2I</argument>
+      <argument>Xv21gudjOakBjKgBMsM1u+</argument>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       </call>
@@ -752,7 +759,7 @@
       <argument type="service" id="form.resolved_type_factory"/>
     </service>
     <service id="form.extension" class="Symfony\Component\Form\Extension\DependencyInjection\DependencyInjectionExtension" public="false">
-      <argument type="service" id="service_locator.314ed85480d8642530760241b4a94003"/>
+      <argument type="service" id="service_locator.a90c7fd99db19b5934460a211165f4ec"/>
       <argument type="collection">
         <argument key="Symfony\Component\Form\Extension\Core\Type\FormType" type="iterator">
           <argument type="service" id="form.type_extension.form.http_foundation"/>
@@ -2187,12 +2194,12 @@
     </service>
     <service id="security.authentication.listener.anonymous.main" class="Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener" public="false">
       <argument type="service" id="security.token_storage"/>
-      <argument>61a82473584162.52092051</argument>
+      <argument>61a83c88060f25.46427223</argument>
       <argument type="service" id="monolog.logger.security" on-invalid="null"/>
       <argument type="service" id="security.authentication.manager"/>
     </service>
     <service id="security.authentication.provider.anonymous.main" class="Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider" public="false">
-      <argument>61a82473584162.52092051</argument>
+      <argument>61a83c88060f25.46427223</argument>
     </service>
     <service id="security.exception_listener.main" class="Symfony\Component\Security\Http\Firewall\ExceptionListener" public="false">
       <argument type="service" id="security.token_storage"/>
@@ -3259,12 +3266,26 @@
     <service id="web_server.command.server_status" class="Symfony\Bundle\WebServerBundle\Command\ServerStatusCommand" public="false">
       <tag name="console.command"/>
     </service>
+    <service id="instanceof.Symfony\Bundle\FrameworkBundle\Controller\Controller.0.AppBundle\Controller\CategoryController" class="AppBundle\Controller\CategoryController" autowire="true" abstract="true"/>
+    <service id="abstract.instanceof.AppBundle\Controller\CategoryController" class="AppBundle\Controller\CategoryController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id="instanceof.Symfony\Bundle\FrameworkBundle\Controller\Controller.0.AppBundle\Controller\DefaultController" class="AppBundle\Controller\DefaultController" autowire="true" abstract="true"/>
     <service id="abstract.instanceof.AppBundle\Controller\DefaultController" class="AppBundle\Controller\DefaultController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id="instanceof.Symfony\Bundle\FrameworkBundle\Controller\Controller.0.AppBundle\Controller\JobController" class="AppBundle\Controller\JobController" autowire="true" abstract="true"/>
     <service id="abstract.instanceof.AppBundle\Controller\JobController" class="AppBundle\Controller\JobController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id="instanceof.Symfony\Component\Form\FormTypeInterface.0.AppBundle\Form\CategoryType" class="AppBundle\Form\CategoryType" public="false" autowire="true" abstract="true"/>
+    <service id="abstract.instanceof.AppBundle\Form\CategoryType" class="AppBundle\Form\CategoryType" public="false" autowire="true" autoconfigure="true" abstract="true"/>
     <service id="instanceof.Symfony\Component\Form\FormTypeInterface.0.AppBundle\Form\JobType" class="AppBundle\Form\JobType" public="false" autowire="true" abstract="true"/>
     <service id="abstract.instanceof.AppBundle\Form\JobType" class="AppBundle\Form\JobType" public="false" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id="service_locator.3361c83547e0e938169a0e35e60f6dac" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection"/>
+    </service>
+    <service id="service_locator.935df036c0760a61bb7b241d0e23f506" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="category" type="service" id="autowired.AppBundle\Entity\Category"/>
+      </argument>
+    </service>
     <service id="service_locator.4f8384c8862c511eefe34301cff90111" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection"/>
@@ -3285,20 +3306,25 @@
         <argument key="job" type="service" id="autowired.AppBundle\Entity\Job"/>
       </argument>
     </service>
-    <service id="service_locator.67fafda7e4875164a7cdcc0f94d64a2d" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id="service_locator.e6db932ec1fb08cb20ea78ef2a7ed7ba" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="AppBundle\Controller\CategoryController:deleteAction" type="service" id="service_locator.935df036c0760a61bb7b241d0e23f506"/>
+        <argument key="AppBundle\Controller\CategoryController:editAction" type="service" id="service_locator.935df036c0760a61bb7b241d0e23f506"/>
         <argument key="AppBundle\Controller\JobController:deleteAction" type="service" id="service_locator.70cbfc1e536a932501a7529638ca9eab"/>
         <argument key="AppBundle\Controller\JobController:editAction" type="service" id="service_locator.70cbfc1e536a932501a7529638ca9eab"/>
         <argument key="AppBundle\Controller\JobController:showAction" type="service" id="service_locator.c58ff128456d6367b46a22175de4e46c"/>
+        <argument key="AppBundle\Controller\CategoryController::deleteAction" type="service" id="service_locator.935df036c0760a61bb7b241d0e23f506"/>
+        <argument key="AppBundle\Controller\CategoryController::editAction" type="service" id="service_locator.935df036c0760a61bb7b241d0e23f506"/>
         <argument key="AppBundle\Controller\JobController::deleteAction" type="service" id="service_locator.70cbfc1e536a932501a7529638ca9eab"/>
         <argument key="AppBundle\Controller\JobController::editAction" type="service" id="service_locator.70cbfc1e536a932501a7529638ca9eab"/>
         <argument key="AppBundle\Controller\JobController::showAction" type="service" id="service_locator.c58ff128456d6367b46a22175de4e46c"/>
       </argument>
     </service>
-    <service id="service_locator.314ed85480d8642530760241b4a94003" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id="service_locator.a90c7fd99db19b5934460a211165f4ec" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="AppBundle\Form\CategoryType" type="service" id="AppBundle\Form\CategoryType"/>
         <argument key="AppBundle\Form\JobType" type="service" id="AppBundle\Form\JobType"/>
         <argument key="Symfony\Bridge\Doctrine\Form\Type\EntityType" type="service" id="form.type.entity"/>
         <argument key="Symfony\Component\Form\Extension\Core\Type\ChoiceType" type="service" id="form.type.choice"/>
@@ -3469,6 +3495,7 @@
         <argument key="twig" type="service" id="twig"/>
       </argument>
     </service>
+    <service id="autowired.AppBundle\Entity\Category" class="AppBundle\Entity\Category" public="false" autowire="true"/>
     <service id="autowired.AppBundle\Entity\Job" class="AppBundle\Entity\Job" public="false" autowire="true"/>
     <service id="service_locator.39e66930232432ca5ba91e98fdd8a17b" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
@@ -3493,7 +3520,7 @@
     <service id="cache.system.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface" public="false" lazy="true">
       <argument>kNlEkVkW4L</argument>
       <argument>0</argument>
-      <argument>9xQFOI8+wrEs77shfGOj2I</argument>
+      <argument>Xv21gudjOakBjKgBMsM1u+</argument>
       <argument>E:\xampp\htdocs\tutorial\symfony3-Jobeet\var\cache\dev/pools</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
@@ -3501,7 +3528,7 @@
     <service id="cache.validator.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface" public="false" lazy="true">
       <argument>eTpYDWOVu5</argument>
       <argument>0</argument>
-      <argument>9xQFOI8+wrEs77shfGOj2I</argument>
+      <argument>Xv21gudjOakBjKgBMsM1u+</argument>
       <argument>E:\xampp\htdocs\tutorial\symfony3-Jobeet\var\cache\dev/pools</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
@@ -3509,7 +3536,7 @@
     <service id="cache.serializer.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface" public="false" lazy="true">
       <argument>kdDJyZTlo5</argument>
       <argument>0</argument>
-      <argument>9xQFOI8+wrEs77shfGOj2I</argument>
+      <argument>Xv21gudjOakBjKgBMsM1u+</argument>
       <argument>E:\xampp\htdocs\tutorial\symfony3-Jobeet\var\cache\dev/pools</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
@@ -3517,7 +3544,7 @@
     <service id="cache.annotations.recorder_inner" class="Symfony\Component\Cache\Adapter\AdapterInterface" public="false" lazy="true">
       <argument>C21O9BzD7x</argument>
       <argument>0</argument>
-      <argument>9xQFOI8+wrEs77shfGOj2I</argument>
+      <argument>Xv21gudjOakBjKgBMsM1u+</argument>
       <argument>E:\xampp\htdocs\tutorial\symfony3-Jobeet\var\cache\dev/pools</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>

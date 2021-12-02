@@ -1032,5 +1032,209 @@ class CategoryRepository extends EntityRepository
 }
 ```
 
+### 分类
 
+先生成分类的控制器
+
+```
+ php bin/console generate:doctrine:crud --entity=AppBundle:Category --format=annotation --with-write --no-interaction
+```
+
+在 `AppBundle/Controller/CategoryController.php` 中更改 `category_show` 的路由规则  
+
+```php
+//src/AppBundle/Controller/CategoryController.php
+<?php 
+  
+class CategoryController extends Controller
+{
+  ...
+    /**
+     * Finds and displays a category entity.
+     *
+     * @Route("/category/{slug} ", name="category_show")
+     * @Method("GET")
+     */
+    public function showAction(Category $category)
+    {
+        $deleteForm = $this->createDeleteForm($category);
+
+        return $this->render('category/show.html.twig', array(
+            'category' => $category,
+            'delete_form' => $deleteForm->createView(),
+        ));
+    }
+  ...
+}
+```
+
+修改 `Category` 实体
+
+```php
+//src/AppBundle/Entity/Category.php
+<?php
+
+// ...
+use AppBundle\Utils\Jobeet;
+// ...
+ 
+class Category
+{
+    // ...
+ 
+    public function getSlug()
+    {
+        return Jobeet::slugify($this->getName());
+    }
+ 
+    // ...
+}
+```
+
+然后修改首页模板
+
+```html
+<!--app/Resources/views/job/index.html.twig-->
+<h1><a href="{{ path('category_show', { 'slug': category.slug }) }}">{{ category.name }}</a></h1>
+
+<!-- ... -->
+
+<table class="jobs">
+    <!-- ... -->
+</table>
+{% if category.moreJobs %}
+    <div class="more_jobs">
+        and <a href="{{ path('category_show', { 'slug': category.slug }) }}">{{ category.moreJobs }}</a> more...
+    </div>
+{% endif %}
+```
+
+在模板中使用了 `category.morejobs` ，需要在实体中定义
+
+```php
+//src/AppBunlde/Entity/Category.php
+<?php
+
+// ...
+ 
+private $moreJobs;
+ 
+// ...
+ 
+public function setMoreJobs($jobs)
+{
+    $this->moreJobs = $jobs >=  0 ? $jobs : 0;
+}
+ 
+public function getMoreJobs()
+{
+    return $this->moreJobs;
+}
+
+```
+
+然后在控制器中增加更多查询
+
+```php
+//src/AppBundle/Controller/JobController.php
+<?php 
+ ...
+class JobController extends Controller
+{
+  
+   public function indexAction()
+    {
+     ...
+        foreach ($categories as $category) {
+          ...
+          $category->setMoreJobs($em->getRepository('AppBundle:Job')->countActiveJobs($category->getId()) - $this->container->getParameter('max_jobs_on_homepage'));
+        }
+    	...
+   }
+}
+```
+
+`JobRepository.php` 增加 `countActiveJobs` 方法
+
+```php
+//src/AppBundle/Repository/JobRepository.php
+<?php
+....
+  
+public function countActiveJobs($category_id = null)
+{
+    $qb = $this->createQueryBuilder('j')
+        ->select('count(j.id)')
+        ->where('j.expiresAt > :date')
+        ->setParameter('date', date('Y-m-d H:i:s', time()));
+    if($category_id)
+    {
+        $qb->andWhere('j.category = :category_id')
+           ->setParameter('category_id', $category_id);
+    }
+    $query = $qb->getQuery();
+    
+    return $query->getSingleScalarResult();
+}
+```
+
+在 ``src/AppBundle/Entity/Category.php``  增加slug
+
+```php
+<?php
+
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $slug;
+```
+
+更新实体
+
+```
+php bin/console doctrine:generate:entities AppBundle
+```
+
+增加 `setSlugValue` 方法，使用 `PrePersist` lifecycle callback  预先填充
+
+```php
+//src/AppBundle/Entity/Category.php
+<?php
+
+// ...
+
+/**
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\CategoryRepository")
+ * @ORM\Table(name="category")
+ * @ORM\HasLifecycleCallbacks()
+ */
+class Category
+{
+    // ...
+    
+    /**
+     * @ORM\PrePersist
+     */
+    public function setSlugValue()
+    {
+        $this->slug = Jobeet::slugify($this->getName());
+    }
+```
+
+然后删除数据库重新生成书库
+
+```\
+php bin/console doctrine:database:drop --force
+php bin/console doctrine:database:create
+php bin/console doctrine:schema:update --force
+php bin/console doctrine:fixtures:load
+```
+
+使用最后一条命令遇到下面这个错误
+
+```
+QLSTATE[23000]: Integrity constraint violation: 1048 Column 'slug' cannot be null
+```
+
+是因为 ``@ORM\HasLifecycleCallbacks()`` 未添加到实体中
 
