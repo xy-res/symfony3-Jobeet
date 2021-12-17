@@ -16,6 +16,19 @@ services:
         # this means you cannot fetch services directly from the container via $container->get()
         # if you need to do this, you can override this setting on individual services
         public: false
+    app.admin.category:
+        class: AppBundle\Admin\CategoryAdmin
+        arguments: [~, AppBundle\Entity\Category, ~]
+        public: true
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Jobeet, label: Categories }
+
+    app.admin.job:
+        class: AppBundle\Admin\JobAdmin
+        arguments: [~, AppBundle\Entity\Job, AppBundle:JobAdmin]
+        public: true
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Jobeet, label: Jobs }
 
     # makes classes in src/AppBundle available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -38,17 +51,17 @@ services:
     #         $someArgument: 'some_value'
 
     AppBundle\DataFixtures\:
-            resource: '../../src/AppBundle/DataFixtures'
-            tags: ['doctrine.fixture.orm']
+        resource: '../../src/AppBundle/DataFixtures'
+        tags: ['doctrine.fixture.orm']
 
 
 
     app.doctrine_job_listener:
-            class: AppBundle\EventListener\JobUploadListener
-            arguments: ['@app.job_uploader']
-            tags:
+        class: AppBundle\EventListener\JobUploadListener
+        arguments: ['@app.job_uploader']
+        tags:
                 - { name: doctrine.event_listener, event: prePersist }
                 - { name: doctrine.event_listener, event: preUpdate }
     app.job_uploader:
-              class: AppBundle\Utils\FileUploader
-              arguments: ['%jobs_directory%']
+        class: AppBundle\Utils\FileUploader
+        arguments: ['%jobs_directory%']

@@ -54,10 +54,14 @@ class JobType extends AbstractType
     /**
      * {@inheritdoc}
      */
+//    public function getBlockPrefix()
+//    {
+//        return 'appbundle_job';
+//    }
+
     public function getBlockPrefix()
     {
-        return 'appbundle_job';
+        return 'job';
     }
-
 
 }

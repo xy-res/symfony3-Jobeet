@@ -102,6 +102,8 @@ class Job
      */
     private	$updateAt;
 
+    private $file;
+
     /**
      * Get id
      *
@@ -578,5 +580,32 @@ class Job
     public function publish()
     {
         $this->setIsActivated(true);
+    }
+
+    public function extend()
+    {
+        if (!$this->expiresSoon())
+        {
+            return false;
+        }
+
+        $this->expiresAt = new \DateTime(date('Y-m-d H:i:s', time() + 86400 * 30));
+
+        return true;
+    }
+
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    public function setFile($file)
+    {
+        $this->file = $file;
+        if($file) {
+            // we need to change the logo to let Doctrine know our Job object has changed;
+            // that's because Doctrine does not monitor the $file property
+            $this->logo = md5(uniqid()).'.'.$file->guessExtension();
+        }
     }
 }
