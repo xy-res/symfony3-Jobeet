@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2021\11\30 0030
- * Time: 14:34
- */
+
 
 namespace AppBundle\Entity;
 
@@ -37,7 +32,9 @@ class Job
     /**
      * @ORM\Column(type="string",length=255)
      * @Assert\NotBlank()
+     * @Assert\Choice(callback="getTypeValues")
      */
+
     private $type;
     /**
      * @ORM\Column(type="string",length=255)
@@ -46,12 +43,11 @@ class Job
     private	$company;
     /**
      * @ORM\Column(type="string",length=255, nullable=true)
-     * @Assert\NotBlank()
+     * @Assert\Image()
      */
     private	$logo;
     /**
      * @ORM\Column(type="string", length=255,nullable=true)
-     * @Assert\NotBlank()
      */
     private	$url;
     /**
@@ -90,21 +86,19 @@ class Job
     /**
      * @ORM\Column(type="string",length=255)
      * @Assert\NotBlank()
+     * @Assert\Email()
      */
     private	$email;
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotBlank()
      */
     private	$expiresAt;
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotBlank()
      */
     private	$createdAt;
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotBlank()
      */
     private	$updateAt;
 
@@ -544,5 +538,45 @@ class Job
             $now = $this->getCreatedAt() ? $this->getCreatedAt()->format('U') : time();
             $this->expiresAt = new \DateTime(date('Y-m-d H:i:s', $now + 86400 * 30));
         }
+    }
+
+    public static function getTypes()
+    {
+        return array('full-time' => 'Full time', 'part-time' => 'Part time', 'freelance' => 'Freelance');
+    }
+    public static function getTypeValues()
+    {
+        return array_keys(self::getTypes());
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setTokenValue()
+    {
+        if(!$this->getToken())
+        {
+            $this->token = sha1($this->getEmail().rand(11111, 99999));
+        }
+    }
+
+    public function isExpired()
+    {
+        return $this->getDaysBeforeExpires() < 0;
+    }
+
+    public function expiresSoon()
+    {
+        return $this->getDaysBeforeExpires() < 5;
+    }
+
+    public function getDaysBeforeExpires()
+    {
+        return ceil(($this->getExpiresAt()->format('U') - time()) / 86400);
+    }
+
+    public function publish()
+    {
+        $this->setIsActivated(true);
     }
 }

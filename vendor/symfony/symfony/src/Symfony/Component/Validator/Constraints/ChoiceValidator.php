@@ -46,6 +46,7 @@ class ChoiceValidator extends ConstraintValidator
             throw new UnexpectedTypeException($value, 'array');
         }
 
+
         if ($constraint->callback) {
             if (!is_callable($choices = array($this->context->getObject(), $constraint->callback))
                 && !is_callable($choices = array($this->context->getClassName(), $constraint->callback))
