@@ -94,8 +94,26 @@ class JobController extends Controller
      * @ParamConverter("job", options={"repository_method" = "getActiveJob"})
      * @Method("GET")
      */
-    public function showAction(Job $job)
+    public function showAction(Request $request,Job $job)
     {
+        $session = $request->getSession();
+        // fetch jobs already stored in the job history
+        $jobsArray = $session->get('job_history', array());
+        $jobArray = array(
+            'id' => $job->getId(),
+            'position' => $job->getPosition(),
+            'company' => $job->getCompany(),
+            'companySlug' => $job->getCompanySlug(),
+            'locationSlug' => $job->getLocationSlug(),
+            'positionSlug' => $job->getPositionSlug());
+        if (!in_array($jobArray, $jobsArray)) {
+            // add the current job at the beginning of the array
+            array_unshift($jobsArray, $jobArray);
+
+            // store the new job history back into the session
+            $session->set('job_history', array_slice($jobsArray, 0, 3));
+        }
+        $this->addFlash('notice', 'Your job is now online for 30 days.');
         $deleteForm = $this->createDeleteForm($job);
 
         return $this->render('job/show.html.twig', array(
